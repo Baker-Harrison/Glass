@@ -60,12 +60,26 @@ export function turnContent(messages) {
     const parts = Array.isArray(message.content)
       ? message.content
       : [{ type: "text", text: message.content || "" }];
-    return parts.filter(
-      (part) =>
-        part.type === "toolCall" ||
-        (part.type === "thinking" && part.thinking?.trim()) ||
-        (part.type === "text" && part.text?.trim() && message !== final),
-    );
+    return parts.flatMap((part, index) => {
+      if (part.type === "thinking" && part.thinking?.trim()) {
+        const timing = message.glassTiming?.thinking?.[index];
+        return [{ ...part, timing }];
+      }
+      return part.type === "toolCall" ||
+        (part.type === "text" && part.text?.trim() && message !== final)
+        ? [part]
+        : [];
+    });
   });
   return { work, final };
+}
+
+export function messageAge(timestamp, now = Date.now()) {
+  if (!Number.isFinite(timestamp)) return "";
+  const minutes = Math.max(0, Math.floor((now - timestamp) / 60000));
+  if (!minutes) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }

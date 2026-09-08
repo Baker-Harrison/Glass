@@ -3283,6 +3283,87 @@ button:hover {
   white-space: normal;
 }
 
+/* Conversation typography and disclosures follow the light chat reference. */
+.user-bubble {
+  border-radius: 14px;
+  border-color: #e8e8e8;
+  background: #fcfcfc;
+  padding: 10px 12px;
+  font-size: 15px;
+  box-shadow: 0 2px 3px #00000006;
+  margin-bottom: 18px;
+}
+.assistant-answer {
+  font-size: 15px;
+  color: #222;
+}
+.thought-step {
+  margin: 0 0 18px;
+  padding: 0 11px;
+}
+.work-steps .thought-step {
+  padding: 0;
+}
+.thought-summary {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  font-size: 15px;
+  color: #777;
+}
+.thought-summary:hover {
+  background: transparent;
+  color: #555;
+}
+.thought-duration {
+  color: #aaa;
+}
+.thought-summary > svg {
+  margin-left: 3px;
+}
+.thought-content {
+  margin-top: 17px;
+  color: #8a8a8a;
+  line-height: 1.65;
+}
+.thought-content p {
+  color: inherit;
+  font-size: 15px;
+  margin: 0 0 17px;
+}
+.thought-content p:last-child {
+  margin-bottom: 0;
+}
+.thinking-status {
+  padding: 0 11px;
+  color: #888;
+  font-size: 15px;
+  animation: pulse 1.6s infinite;
+}
+.work-summary {
+  color: #777;
+  font-size: 14px;
+}
+.work-commentary {
+  color: #888;
+}
+.message-actions {
+  align-items: center;
+  color: #919191;
+  gap: 9px;
+  margin-top: 15px;
+}
+.message-actions button[aria-pressed="true"] {
+  color: #555;
+  background: #e8e7e5;
+}
+.message-age {
+  color: #aaa;
+  font-size: 13px;
+  margin-left: 2px;
+}
+
 .context-control {
   position: static;
   margin-left: auto;
