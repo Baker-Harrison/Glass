@@ -8,6 +8,10 @@ Glass uses Pi's OpenAI Codex provider for ChatGPT sign-in. Credentials remain in
 
 **Status:** early development. Core workflows work, but visual refinement and interaction verification are ongoing. The local app is not notarized.
 
+## Download
+
+Get the macOS Apple Silicon ZIP from [GitHub Releases](https://github.com/Baker-Harrison/Glass/releases). Extract it and move Glass.app to Applications. This first preview is not Developer ID signed or notarized; macOS may block opening it. Intel Macs are not supported by this build. Git and ripgrep are needed for repository and search tools.
+
 ## Run
 
 Requirements: macOS 13+, Node.js 22+, npm, Git, and [ripgrep](https://github.com/BurntSushi/ripgrep) (`brew install ripgrep`).
@@ -49,7 +53,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md), [architecture](docs/architecture.md), an
 
 On macOS, sessions and credentials live in `~/Library/Application Support/glass-agent/`. Never commit this directory, OAuth callbacks, tokens, or personal conversation exports. Projects remain on your filesystem.
 
-The Update button is hidden by default via `features.updateAvailable` in `src/app-config.js`. An actual updater is not integrated yet.
+The Update button is hidden by default. Build with `VITE_GLASS_UPDATE_PREVIEW=1 npm run package:mac` to try the simulated download and restart flow. The preview does not download or install an update. Published builds leave this preview disabled; an actual updater is not integrated yet.
 
 ## Feedback
 

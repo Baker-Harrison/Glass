@@ -1,3 +1,4 @@
+import UpdateDialog from "./update-dialog.jsx";
 import ContextUsage from "./context-usage.jsx";
 import WorkspaceSelector from "./workspace-selector.jsx";
 import glassLogo from "../assets/glass.png";
@@ -184,6 +185,8 @@ function App() {
     [panel, setPanelState] = useState(() => readSaved("panel", "browser")),
     [sidebar, setSidebar] = useState(() => readSaved("sidebar", true)),
     [settings, setSettings] = useState(false),
+    [updateOpen, setUpdateOpen] = useState(false),
+    [updateReady, setUpdateReady] = useState(false),
     [question, setQuestion] = useState(null),
     [auth, setAuth] = useState(null),
     [filter, setFilter] = useState("");
@@ -566,6 +569,7 @@ function App() {
       imagePreview ||
       browserMenu ||
       textDialog ||
+      updateOpen ||
       settings ||
       question ||
       tabMenu ||
@@ -611,6 +615,7 @@ function App() {
     projectMenu,
     textDialog,
     settings,
+    updateOpen,
     question,
     tabMenu,
     contextMenu,
@@ -1102,6 +1107,7 @@ function App() {
     workspaceMenuOpen ||
     accountMenu ||
     shortcutsOpen ||
+    updateOpen ||
     settings ||
     question ||
     tabMenu ||
@@ -1599,9 +1605,9 @@ function App() {
               {features.updateAvailable && (
                 <button
                   className="account-update"
-                  onClick={() => setSettings(true)}
+                  onClick={() => setUpdateOpen(true)}
                 >
-                  Update
+                  {updateReady ? "Restart" : "Update"}
                 </button>
               )}
               <IconButton title="Settings" onClick={() => setSettings(true)}>
@@ -2906,6 +2912,12 @@ function App() {
           />
         </div>
       )}
+      <UpdateDialog
+        open={updateOpen}
+        onClose={() => setUpdateOpen(false)}
+        onReady={setUpdateReady}
+        onRestart={() => api("app:restart")}
+      />
       {settings && (
         <div className="modal-backdrop" onClick={() => setSettings(false)}>
           <section
