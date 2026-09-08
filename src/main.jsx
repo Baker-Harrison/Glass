@@ -1322,28 +1322,42 @@ function App() {
           }
         />
       )}
-      <header className="titlebar" style={{ width: sidebar ? sideWidth : 220 }}>
+      <header className="titlebar" style={{ width: sidebar ? sideWidth : 140 }}>
         <span className="traffic-space" />
-        <IconButton title="Toggle sidebar" onClick={() => setSidebar(!sidebar)}>
-          <PanelLeft size={15} />
-        </IconButton>
-        <span className="spacer" />
         <IconButton
-          title="Go Back"
-          disabled={navigationIndex === 0}
-          onClick={() => navigateChat(-1)}
+          title={sidebar ? "Hide Sidebar" : "Show Sidebar"}
+          onClick={() => setSidebar(!sidebar)}
         >
-          <ArrowLeft size={13} />
+          <PanelLeft size={14} />
         </IconButton>
-        <IconButton
-          title="Go Forward"
-          disabled={navigationIndex >= navigation.current.length - 1}
-          onClick={() => navigateChat(1)}
-        >
-          <ArrowRight size={13} />
-        </IconButton>
-        <span className="window-title">Glass</span>
-        <span className="title-project">{project.split("/").pop()}</span>
+        {sidebar ? (
+          <>
+            <span className="spacer" />
+            <IconButton
+              title="Go Back"
+              disabled={navigationIndex === 0}
+              onClick={() => navigateChat(-1)}
+            >
+              <ArrowLeft size={13} />
+            </IconButton>
+            <IconButton
+              title="Go Forward"
+              disabled={navigationIndex >= navigation.current.length - 1}
+              onClick={() => navigateChat(1)}
+            >
+              <ArrowRight size={13} />
+            </IconButton>
+          </>
+        ) : (
+          <>
+            <IconButton title="Search" onClick={() => setSearchOpen(true)}>
+              <Search size={14} />
+            </IconButton>
+            <IconButton title="New Chat" onClick={newChat}>
+              <Plus size={15} />
+            </IconButton>
+          </>
+        )}
       </header>
       <div
         className={`workspace ${panelExpanded && panel ? "panel-expanded" : ""}`}

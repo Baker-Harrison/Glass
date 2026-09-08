@@ -2342,7 +2342,7 @@ button:hover {
   -webkit-app-region: no-drag;
 }
 .sidebar-hidden .chat-toolbar {
-  padding-left: 226px;
+  padding-left: 146px;
 }
 .new-chat {
   background: transparent;
@@ -3538,4 +3538,23 @@ button:hover {
 }
 .context-popover .context-category-subagents {
   background: #2b7fc1;
+}
+
+/* Reserve fixed native-window clearance in both sidebar states. */
+.titlebar .traffic-space {
+  width: 70px;
+  flex: 0 0 70px;
+}
+.titlebar .icon-button {
+  width: 22px;
+  height: 24px;
+  padding: 0;
+  flex: 0 0 22px;
+}
+.titlebar {
+  gap: 0;
+  padding-right: 4px;
+}
+.sidebar-hidden .titlebar {
+  background: transparent;
 }
