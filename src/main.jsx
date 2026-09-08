@@ -2115,7 +2115,29 @@ function App() {
                         })
                       }
                     >
-                      {mode === "plan" ? "☷ Plan" : "◉ Ask"} <X size={10} />
+                      {mode === "plan" ? (
+                        <>
+                          <svg
+                            className="plan-mode-icon"
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.7"
+                            strokeLinecap="round"
+                            aria-hidden="true"
+                          >
+                            <circle cx="5" cy="6" r="3" />
+                            <circle cx="5" cy="18" r="3" />
+                            <path d="M13 6h9M13 18h6" />
+                          </svg>
+                          Plan
+                        </>
+                      ) : (
+                        "◉ Ask"
+                      )}{" "}
+                      <X size={10} />
                     </button>
                   )}
                   {models.length === 0 ? (

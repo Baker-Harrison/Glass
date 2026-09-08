@@ -1454,6 +1454,10 @@ button:hover {
   font-size: 11px;
   margin-right: 5px;
 }
+.plan-mode-icon {
+  display: block;
+  flex-shrink: 0;
+}
 .mode-chip.plan {
   color: #ba8d4c;
   background: #f4e9d9;
