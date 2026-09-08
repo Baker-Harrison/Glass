@@ -1,3 +1,4 @@
+import ContextUsage from "./context-usage.jsx";
 import WorkspaceSelector from "./workspace-selector.jsx";
 import glassLogo from "../assets/glass.png";
 import { profile, features } from "./app-config.js";
@@ -123,6 +124,7 @@ function App() {
   const [terminalMenu, setTerminalMenu] = useState(false);
   const [browserConsole, setBrowserConsole] = useState(false);
   const [split, setSplit] = useState(() => readSaved("split", null));
+  const [contextUsageOpen, setContextUsageOpen] = useState(false);
   const [splitOverlay, setSplitOverlay] = useState(false);
   const [fileContexts, setFileContexts] = useState([]);
   const [editing, setEditing] = useState(null);
@@ -559,6 +561,7 @@ function App() {
       shortcutsOpen ||
       searchOpen ||
       projectMenu ||
+      contextUsageOpen ||
       splitOverlay ||
       imagePreview ||
       browserMenu ||
@@ -603,6 +606,7 @@ function App() {
     searchOpen,
     browserMenu,
     imagePreview,
+    contextUsageOpen,
     splitOverlay,
     projectMenu,
     textDialog,
@@ -1108,6 +1112,7 @@ function App() {
     textDialog ||
     browserMenu ||
     imagePreview ||
+    contextUsageOpen ||
     splitOverlay ||
     projectMenu
   );
@@ -2202,19 +2207,14 @@ function App() {
                   <span>⇧Tab</span>
                 </button>
                 {active &&
-                  history.find((item) => item.id === active)?.contextUsage
-                    ?.percent != null && (
-                    <span
-                      className="context-usage"
-                      title={`${Math.round(history.find((item) => item.id === active).contextUsage.tokens).toLocaleString()} of ${history.find((item) => item.id === active).contextUsage.contextWindow.toLocaleString()} context tokens (estimated)`}
-                    >
-                      Context{" "}
-                      {Math.round(
-                        history.find((item) => item.id === active).contextUsage
-                          .percent,
-                      )}
-                      %
-                    </span>
+                  history.find((item) => item.id === active)?.completedAt && (
+                    <ContextUsage
+                      key={active || "new"}
+                      usage={
+                        history.find((item) => item.id === active)?.contextUsage
+                      }
+                      onOpenChange={setContextUsageOpen}
+                    />
                   )}
               </div>
             </div>
