@@ -40,5 +40,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Baker-Harrison/Glass.git"
+  },
+  "overrides": {
+    "dompurify": "3.4.15"
   }
 }
