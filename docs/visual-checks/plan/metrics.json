@@ -1,0 +1,7 @@
+{
+  "size": [67, 24],
+  "identical": false,
+  "mean_absolute_rgb_error": 49.803275290215595,
+  "exact_pixel_percent": 0.06218905472636816,
+  "masked_mean_absolute_rgb_error": 14.098666666666666
+}

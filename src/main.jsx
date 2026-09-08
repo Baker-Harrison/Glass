@@ -2119,8 +2119,8 @@ function App() {
                         <>
                           <svg
                             className="plan-mode-icon"
-                            width="12"
-                            height="12"
+                            width="14"
+                            height="14"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -2128,8 +2128,8 @@ function App() {
                             strokeLinecap="butt"
                             aria-hidden="true"
                           >
-                            <circle cx="6" cy="6" r="4" />
-                            <circle cx="6" cy="18" r="4" />
+                            <circle cx="6" cy="6" r="3.5" />
+                            <circle cx="6" cy="18" r="3.5" />
                             <path d="M14 6h8M14 18h8" />
                           </svg>
                           Plan
@@ -2137,7 +2137,7 @@ function App() {
                       ) : (
                         "◉ Ask"
                       )}{" "}
-                      <X size={10} />
+                      <X size={mode === "plan" ? 14 : 10} />
                     </button>
                   )}
                   {models.length === 0 ? (

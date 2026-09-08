@@ -1459,8 +1459,48 @@ button:hover {
   flex-shrink: 0;
 }
 .mode-chip.plan {
-  color: #ba8d4c;
-  background: #f4e9d9;
+  --plan-scale: 0.85;
+  --plan-foreground: #9c6a23;
+  --plan-background: #f0eae1;
+  --plan-hover: #e9e0d3;
+  --plan-outline: transparent;
+  width: calc(84px * var(--plan-scale));
+  height: calc(26px * var(--plan-scale));
+  padding: 0 calc(8px * var(--plan-scale));
+  gap: calc(4px * var(--plan-scale));
+  border-radius: 999px;
+  font-size: calc(15px * var(--plan-scale));
+  line-height: 1;
+  color: var(--plan-foreground);
+  background: var(--plan-background);
+  box-shadow: inset 0 0 0 1px var(--plan-outline);
+}
+.mode-chip.plan svg {
+  width: calc(14px * var(--plan-scale));
+  height: calc(14px * var(--plan-scale));
+  flex-shrink: 0;
+}
+.mode-chip.plan > svg:last-child {
+  width: calc(16px * var(--plan-scale));
+  height: calc(16px * var(--plan-scale));
+  margin-left: calc(2px * var(--plan-scale));
+}
+.mode-chip.plan:hover {
+  background: var(--plan-hover);
+}
+/* Full-size dark reference retained for the future theme selector. */
+[data-theme="dark"] .mode-chip.plan {
+  --plan-scale: 1;
+  --plan-foreground: #d1a15d;
+  --plan-background: #363028;
+  --plan-hover: #443b2f;
+  --plan-outline: transparent;
+  font-size: 16px;
+}
+[data-theme="dark"] .mode-chip.plan > svg:last-child {
+  width: 14px;
+  height: 14px;
+  margin-left: 1px;
 }
 .mode-chip.ask {
   color: #6d9788;
