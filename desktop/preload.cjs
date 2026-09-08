@@ -7,6 +7,8 @@ const channels = new Set([
   "plan:build",
   "project:open",
   "project:select",
+  "project:branches",
+  "project:switch-branch",
   "project:remove",
   "conversation:update",
   "project:changes",

@@ -3133,3 +3133,108 @@ button:hover {
   font-size: 16px;
   font-weight: 500;
 }
+
+.workspace-selector {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.workspace-selector > button {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 2px 0;
+  min-width: 0;
+}
+.workspace-selector > button span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.workspace-selector-menu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 9px);
+  width: 300px;
+  max-width: calc(100vw - 32px);
+  background: #fcfcfc;
+  border: 1px solid #dedede;
+  box-shadow: 0 7px 24px #0002;
+  border-radius: 11px;
+  z-index: 130;
+  padding: 5px;
+  color: #444;
+}
+.empty-chat .workspace-selector-menu {
+  top: calc(100% + 9px);
+  bottom: auto;
+}
+.selector-search {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  padding: 7px;
+  border-bottom: 1px solid #e8e8e8;
+}
+.selector-search input {
+  flex: 1;
+  width: 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+}
+.selector-list {
+  max-height: 235px;
+  overflow: auto;
+  padding: 4px 0;
+}
+.workspace-selector-menu button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  text-align: left;
+  font-size: 12px;
+}
+.workspace-selector-menu button > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.workspace-selector-menu button > .selector-project-label {
+  display: block;
+}
+.selector-project-label strong {
+  display: block;
+  font-weight: 400;
+}
+.selector-project-label small {
+  display: block;
+  color: #999;
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.workspace-selector-menu .selector-folder {
+  border-top: 1px solid #e8e8e8;
+  border-radius: 0 0 6px 6px;
+}
+.selector-list p,
+.selector-error {
+  padding: 8px;
+  margin: 0;
+  font-size: 12px;
+}
+.selector-error {
+  color: #ac4343;
+  white-space: normal;
+}

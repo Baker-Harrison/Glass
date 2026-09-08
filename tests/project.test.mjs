@@ -1,10 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdtemp, writeFile, rm, mkdir } from "node:fs/promises";
+import { mkdtemp, writeFile, rm, mkdir, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
-import { changes, search } from "../desktop/project.mjs";
+import {
+  changes,
+  search,
+  branches,
+  switchBranch,
+} from "../desktop/project.mjs";
 test("review includes renamed, modified and untracked files without losing paths with spaces", async () => {
   const cwd = await mkdtemp(path.join(tmpdir(), "glass-review-"));
   const git = (...args) => execFileSync("git", args, { cwd, stdio: "pipe" });
@@ -50,6 +55,51 @@ test("search respects ignored files in folders without Git and returns source li
     assert.deepEqual(await search(cwd, "needle"), [
       { path: "source.txt", line: 2, text: "needle text" },
     ]);
+  } finally {
+    await rm(cwd, { recursive: true, force: true });
+  }
+});
+
+test("branch switching updates the checkout and preserves conflicting edits", async () => {
+  const cwd = await mkdtemp(path.join(tmpdir(), "glass-branches-"));
+  const git = (...args) =>
+    execFileSync("git", args, { cwd, stdio: "pipe" }).toString().trim();
+  try {
+    git("init", "-b", "main");
+    git("config", "user.email", "test@example.invalid");
+    git("config", "user.name", "Glass Test");
+    await writeFile(path.join(cwd, "example.txt"), "main content\n");
+    git("add", ".");
+    git("commit", "-m", "main");
+    git("switch", "-c", "feature/example");
+    await writeFile(path.join(cwd, "example.txt"), "feature content\n");
+    git("commit", "-am", "feature");
+    git("switch", "main");
+    assert.deepEqual((await branches(cwd)).branches, [
+      "feature/example",
+      "main",
+    ]);
+    assert.equal(
+      (await switchBranch(cwd, "feature/example")).branch,
+      "feature/example",
+    );
+    assert.equal(git("branch", "--show-current"), "feature/example");
+    assert.equal(
+      await readFile(path.join(cwd, "example.txt"), "utf8"),
+      "feature content\n",
+    );
+    await writeFile(path.join(cwd, "example.txt"), "unsaved work\n");
+    await assert.rejects(switchBranch(cwd, "main"), /overwritten/);
+    assert.equal(git("branch", "--show-current"), "feature/example");
+    assert.equal(
+      await readFile(path.join(cwd, "example.txt"), "utf8"),
+      "unsaved work\n",
+    );
+    await assert.rejects(
+      switchBranch(cwd, "--discard-changes"),
+      /existing local branch/,
+    );
+    await assert.rejects(switchBranch(cwd, "missing"), /existing local branch/);
   } finally {
     await rm(cwd, { recursive: true, force: true });
   }

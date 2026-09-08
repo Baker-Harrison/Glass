@@ -124,3 +124,32 @@ export async function search(cwd, query) {
     throw error;
   }
 }
+
+export async function branches(cwd) {
+  const info = await gitInfo(cwd);
+  if (!info.repository) throw new Error("This folder is not a Git repository.");
+  const { stdout } = await exec(
+    "git",
+    ["for-each-ref", "--format=%(refname:short)", "refs/heads"],
+    { cwd },
+  );
+  return {
+    ...info,
+    branches: stdout
+      .split("\n")
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b)),
+  };
+}
+export async function switchBranch(cwd, branch) {
+  const available = await branches(cwd);
+  if (typeof branch !== "string" || !available.branches.includes(branch))
+    throw new Error("Choose an existing local branch.");
+  if (branch === available.branch) return available;
+  try {
+    await exec("git", ["switch", "--no-guess", branch], { cwd });
+  } catch (error) {
+    throw new Error((error.stderr || error.message).trim());
+  }
+  return gitInfo(cwd);
+}
