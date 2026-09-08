@@ -72,3 +72,19 @@ test("tool progress stays in chronological work history with only the final answ
   assert.equal(after.final, final);
   assert.deepEqual(after.work, before.work);
 });
+
+test("standalone thinking retains measured timing without becoming answer text", () => {
+  const message = {
+    role: "assistant",
+    timestamp: 20,
+    content: [
+      { type: "thinking", thinking: "Short summary" },
+      { type: "text", text: "Answer" },
+    ],
+    glassTiming: { thinking: { 0: { startedAt: 100, endedAt: 1200 } } },
+  };
+  const result = turnContent([message]);
+  assert.equal(result.final, message);
+  assert.equal(result.work.length, 1);
+  assert.deepEqual(result.work[0].timing, { startedAt: 100, endedAt: 1200 });
+});

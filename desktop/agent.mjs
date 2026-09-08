@@ -10,6 +10,7 @@ import {
 } from "@earendil-works/pi-coding-agent";
 import { Plans } from "./plans.mjs";
 import { Questions } from "./questions.mjs";
+import { MessageTimings } from "./message-timings.mjs";
 
 export class AgentWorkspace {
   sessions = new Map();
@@ -220,9 +221,25 @@ export class AgentWorkspace {
         "update_todos",
       ],
     });
-    this.sessions.set(id, { session, manager, cwd, mode });
+    const timings = new MessageTimings(
+      manager
+        .getBranch()
+        .filter(
+          (entry) =>
+            entry.type === "custom" &&
+            entry.customType === "glass-message-timing",
+        )
+        .map((entry) => entry.data),
+    );
+    this.sessions.set(id, { session, manager, cwd, mode, timings });
     session.subscribe((event) => {
-      this.emit({ type: "agent_event", sessionId: id, event });
+      const decorated = timings.track(event);
+      if (event.type === "message_end" && event.message?.role === "assistant")
+        manager.appendCustomEntry(
+          "glass-message-timing",
+          decorated.message.glassTiming,
+        );
+      this.emit({ type: "agent_event", sessionId: id, event: decorated });
       if (event.type === "message_end" || event.type === "agent_end")
         this.emit({
           type: "context_usage",
@@ -238,7 +255,7 @@ export class AgentWorkspace {
       modelId: session.model?.id,
       thinkingLevel: session.thinkingLevel,
       sessionFile: session.sessionFile,
-      messages: session.messages,
+      messages: session.messages.map((message) => timings.decorate(message)),
       plan: await this.plans.get(id),
     };
   }

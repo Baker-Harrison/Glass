@@ -392,7 +392,9 @@ async function start() {
         });
         return {
           ...saved,
-          messages: live.session.messages,
+          messages: live.session.messages.map((message) =>
+            live.timings.decorate(message),
+          ),
           mode: live.mode,
           modelId: live.session.model?.id,
           thinkingLevel: live.session.thinkingLevel,

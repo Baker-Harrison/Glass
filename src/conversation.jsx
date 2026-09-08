@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {
@@ -11,12 +11,15 @@ import {
   Terminal,
   FileText,
   Globe,
+  ThumbsUp,
+  ThumbsDown,
 } from "lucide-react";
 import {
   groupTurns,
   textOf,
   userText,
   turnContent,
+  messageAge,
 } from "./conversation-model.mjs";
 function Tool({ call, result }) {
   const [open, setOpen] = useState(false);
@@ -98,6 +101,42 @@ function Tool({ call, result }) {
     </div>
   );
 }
+function Thought({ part, working, now, components, defaultOpen = false }) {
+  const [open, setOpen] = useState(null);
+  const expanded = open ?? (working || defaultOpen);
+  const timing = part.timing;
+  const running = working && !timing?.endedAt;
+  const elapsed =
+    timing?.startedAt != null
+      ? Math.max(
+          1,
+          Math.round(((timing.endedAt ?? now) - timing.startedAt) / 1000),
+        )
+      : null;
+  return (
+    <div className="thought-step">
+      <button
+        className="thought-summary"
+        aria-expanded={expanded}
+        onClick={() => setOpen(!expanded)}
+      >
+        <span>{running ? "Thinking" : "Thought"}</span>
+        {elapsed != null && (
+          <span className="thought-duration">{elapsed}s</span>
+        )}
+        {expanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
+      </button>
+      {expanded && (
+        <div className="thought-content">
+          <Markdown remarkPlugins={[remarkGfm]} components={components}>
+            {part.thinking}
+          </Markdown>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Turn({
   turn,
   working,
@@ -107,6 +146,7 @@ function Turn({
   onOpenLink,
   onOpenImage,
   stopped,
+  now,
 }) {
   const markdownComponents = {
     a: ({ href, children }) => (
@@ -121,11 +161,29 @@ function Turn({
       </a>
     ),
   };
-  const [expanded, setExpanded] = useState(false),
+  const [expanded, setExpanded] = useState(null),
     [copied, setCopied] = useState(false);
   const assistant = turn.messages.filter((m) => m.role === "assistant");
   const { work, final } = turnContent(turn.messages);
   const finalMessages = final ? [final] : [];
+  const groupedWork = work.some((part) => part.type !== "thinking");
+  const workExpanded = expanded ?? working;
+  const feedbackKey = `glass:feedback:${turn.user?.timestamp ?? final?.timestamp}`;
+  const [feedback, setFeedback] = useState(() => {
+    try {
+      return localStorage.getItem(feedbackKey) || null;
+    } catch {
+      return null;
+    }
+  });
+  const rate = (value) => {
+    const next = feedback === value ? null : value;
+    setFeedback(next);
+    try {
+      if (next) localStorage.setItem(feedbackKey, next);
+      else localStorage.removeItem(feedbackKey);
+    } catch {}
+  };
   const wasStopped =
     stopped ||
     assistant.at(-1)?.stopReason === "aborted" ||
@@ -163,7 +221,8 @@ function Turn({
     ? fileContexts.filter((file) => file && typeof file.path === "string")
     : [];
   const start = turn.user?.timestamp;
-  const end = turn.messages.at(-1)?.timestamp;
+  const end =
+    assistant.at(-1)?.glassTiming?.endedAt ?? turn.messages.at(-1)?.timestamp;
   const seconds =
     start && end ? Math.max(1, Math.round((end - start) / 1000)) : null;
   const duration = seconds
@@ -224,20 +283,25 @@ function Turn({
           </button>
         </div>
       )}
-      {(work.length > 0 || working) && (
+      {groupedWork && (
         <div className="work-group">
           <button
             className={`work-summary ${working ? "streaming" : ""}`}
-            onClick={() => setExpanded(!expanded)}
+            aria-expanded={workExpanded}
+            onClick={() => setExpanded(!workExpanded)}
           >
             {working
               ? "Working"
               : duration
                 ? `Worked for ${duration}`
                 : "Worked"}
-            {expanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+            {workExpanded ? (
+              <ChevronDown size={11} />
+            ) : (
+              <ChevronRight size={11} />
+            )}
           </button>
-          {expanded && (
+          {workExpanded && (
             <div className="work-steps">
               {work.map((part, index) =>
                 part.type === "text" ? (
@@ -250,12 +314,13 @@ function Turn({
                     </Markdown>
                   </div>
                 ) : part.type === "thinking" ? (
-                  <details className="thought-step" key={index}>
-                    <summary>Thought</summary>
-                    <Markdown components={markdownComponents}>
-                      {part.thinking}
-                    </Markdown>
-                  </details>
+                  <Thought
+                    key={index}
+                    part={part}
+                    components={markdownComponents}
+                    working={working}
+                    now={now}
+                  />
                 ) : (
                   <Tool
                     key={part.id}
@@ -270,6 +335,22 @@ function Turn({
             </div>
           )}
         </div>
+      )}
+      {!groupedWork &&
+        work
+          .filter((part) => part.type === "thinking")
+          .map((part, index) => (
+            <Thought
+              key={index}
+              part={part}
+              components={markdownComponents}
+              working={working && !textOf(final || {}).trim()}
+              now={now}
+              defaultOpen
+            />
+          ))}
+      {working && !work.length && !textOf(final || {}).trim() && (
+        <div className="thinking-status">Thinking</div>
       )}
       {work
         .filter(
@@ -311,6 +392,22 @@ function Turn({
       {!working && finalMessages.some((message) => textOf(message).trim()) && (
         <div className="message-actions">
           <button
+            title="Helpful"
+            aria-label="Helpful"
+            aria-pressed={feedback === "up"}
+            onClick={() => rate("up")}
+          >
+            <ThumbsUp size={13} />
+          </button>
+          <button
+            title="Not helpful"
+            aria-label="Not helpful"
+            aria-pressed={feedback === "down"}
+            onClick={() => rate("down")}
+          >
+            <ThumbsDown size={13} />
+          </button>
+          <button
             title="Copy message"
             aria-label="Copy message"
             onClick={async () => {
@@ -328,8 +425,17 @@ function Turn({
             aria-label="Fork conversation"
             onClick={() => onFork(turn)}
           >
-            <GitFork size={12} />
+            <GitFork size={13} />
           </button>
+          {end && (
+            <time
+              className="message-age"
+              dateTime={new Date(end).toISOString()}
+              title={new Date(end).toLocaleString()}
+            >
+              {messageAge(end, now)}
+            </time>
+          )}
         </div>
       )}
     </section>
@@ -345,11 +451,18 @@ export default function Conversation({
   onOpenImage,
   stoppedTurns = [],
 }) {
+  const [now, setNow] = useState(Date.now);
+  useEffect(() => {
+    setNow(Date.now());
+    const timer = setInterval(() => setNow(Date.now()), busy ? 500 : 30000);
+    return () => clearInterval(timer);
+  }, [busy]);
   const turns = groupTurns(messages);
   return turns.map((turn, index) => (
     <Turn
       key={turn.user?.timestamp ?? index}
       turn={turn}
+      now={now}
       working={busy && index === turns.length - 1}
       stopped={stoppedTurns.includes(turn.user?.timestamp)}
       onRetry={onRetry}
