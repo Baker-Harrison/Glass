@@ -552,6 +552,8 @@ function App() {
   useEffect(() => {
     if (
       panel !== "browser" ||
+      accountMenu ||
+      shortcutsOpen ||
       searchOpen ||
       projectMenu ||
       splitOverlay ||
@@ -590,6 +592,8 @@ function App() {
       window.removeEventListener("resize", update);
     };
   }, [
+    accountMenu,
+    shortcutsOpen,
     panel,
     sidebar,
     searchOpen,
