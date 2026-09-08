@@ -3282,3 +3282,179 @@ button:hover {
   color: #ac4343;
   white-space: normal;
 }
+
+.context-control {
+  position: static;
+  margin-left: auto;
+}
+.context-trigger {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #777;
+  cursor: pointer;
+}
+.context-trigger:hover,
+.context-trigger[aria-expanded="true"] {
+  background: #e9e8e6;
+}
+.context-ring-track,
+.context-ring-fill {
+  fill: none;
+  stroke-width: 3;
+}
+.context-ring-track {
+  stroke: #d5d4d2;
+}
+.context-ring-fill {
+  stroke: #777674;
+}
+.context-tooltip {
+  display: none;
+  position: absolute;
+  bottom: 34px;
+  right: 0;
+  width: max-content;
+  padding: 9px 12px;
+  border: 1px solid #dedddb;
+  border-radius: 10px;
+  background: #fcfcfc;
+  box-shadow: 0 3px 12px #00000012;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #262626;
+  z-index: 110;
+  pointer-events: none;
+}
+.context-tooltip span {
+  color: #666;
+}
+.context-trigger:hover + .context-tooltip,
+.context-trigger:focus-visible + .context-tooltip {
+  display: block;
+}
+.context-popover {
+  position: absolute;
+  bottom: 100%;
+  right: 15px;
+  left: 15px;
+  width: auto;
+  padding: 16px;
+  border: 1px solid #dedddb;
+  border-radius: 15px;
+  background: #fcfcfc;
+  box-shadow: 0 5px 24px #0000000a;
+  z-index: 110;
+  font-size: 13px;
+  font-weight: 400;
+  color: #252525;
+}
+.context-popover header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 15px;
+  color: #555;
+}
+.context-popover header button {
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: #666;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+}
+.context-totals {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: #5b5b5b;
+  font-variant-numeric: tabular-nums;
+}
+.context-bar {
+  display: flex;
+  gap: 1px;
+  height: 5px;
+  margin: 10px 0 18px;
+  border-radius: 4px;
+  background: #dadada;
+  overflow: hidden;
+}
+.context-segment {
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+.context-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 13px;
+}
+.context-row i {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.context-row > span:last-child {
+  margin-left: auto;
+  color: #626262;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.context-popover .context-category-system {
+  background: #777;
+}
+.context-popover .context-category-tools {
+  background: #7963c9;
+}
+.context-popover .context-category-conversation {
+  background: #c94120;
+}
+.context-popover p {
+  margin: 17px 0 0;
+  color: #85817c;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.composer-region {
+  position: relative;
+}
+.empty-chat .composer-region {
+  position: absolute;
+}
+.context-anchor {
+  position: relative;
+}
+.context-tooltip {
+  z-index: 111;
+}
+.context-popover {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+}
+.empty-chat .context-popover {
+  max-height: calc(50vh - 30px);
+}
+.context-popover .context-category-rules {
+  background: #087346;
+}
+
+.context-popover .context-category-skills {
+  background: #ac7000;
+}
+.context-popover .context-category-dynamic {
+  background: #93166c;
+}
+.context-popover .context-category-subagents {
+  background: #2b7fc1;
+}
