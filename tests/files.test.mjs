@@ -22,9 +22,8 @@ test("editor cannot overwrite an agent change made after the file was opened", a
 });
 
 test("file creation and rename stay inside the project and preserve existing files", async () => {
-  const { createProjectEntry, renameProjectEntry } = await import(
-    "../desktop/files.mjs"
-  );
+  const { createProjectEntry, renameProjectEntry } =
+    await import("../desktop/files.mjs");
   const dir = await mkdtemp(path.join(os.tmpdir(), "glass-file-actions-"));
   try {
     await createProjectEntry(dir, "notes", true);
