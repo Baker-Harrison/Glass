@@ -2119,18 +2119,18 @@ function App() {
                         <>
                           <svg
                             className="plan-mode-icon"
-                            width="16"
-                            height="16"
+                            width="12"
+                            height="12"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
-                            strokeWidth="1.7"
-                            strokeLinecap="round"
+                            strokeWidth="2"
+                            strokeLinecap="butt"
                             aria-hidden="true"
                           >
-                            <circle cx="5" cy="6" r="3" />
-                            <circle cx="5" cy="18" r="3" />
-                            <path d="M13 6h9M13 18h6" />
+                            <circle cx="6" cy="6" r="4" />
+                            <circle cx="6" cy="18" r="4" />
+                            <path d="M14 6h8M14 18h8" />
                           </svg>
                           Plan
                         </>
