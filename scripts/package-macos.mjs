@@ -17,7 +17,7 @@ const paths = await packager({
   asar: false,
   prune: true,
   ignore: [
-    /^\/(src|vendor|tests|scripts|release)(\/|$)/,
+    /^\/(src|vendor|tests|scripts|release|docs)(\/|$)/,
     /^\/(PARITY|REQUIREMENTS)\.md$/,
     /^\/vite\.config\.js$/,
     /^\/\.env/,

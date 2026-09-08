@@ -3558,3 +3558,101 @@ button:hover {
 .sidebar-hidden .titlebar {
   background: transparent;
 }
+
+.update-dialog {
+  position: relative;
+  width: 390px;
+  max-width: calc(100vw - 48px);
+  padding: 30px 28px 22px;
+  border: 1px solid #dedddb;
+  border-radius: 20px;
+  background: #fcfcfc;
+  box-shadow: 0 18px 70px #00000022;
+  outline: none;
+}
+.update-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  color: #888;
+  padding: 5px;
+}
+.update-symbol {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: #eeedeb;
+  color: #666;
+  margin-bottom: 20px;
+}
+.update-dialog h2 {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 10px;
+  color: #252525;
+}
+.update-dialog p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #777;
+  margin: 0;
+}
+.update-preview-note {
+  margin-top: 12px;
+  font-size: 11px;
+  color: #999;
+}
+.update-download {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  font-size: 12px;
+  color: #777;
+  font-variant-numeric: tabular-nums;
+}
+.update-progress {
+  flex: 1;
+  height: 5px;
+  border-radius: 5px;
+  background: #e9e8e6;
+  overflow: hidden;
+}
+.update-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #287dc1;
+  transition: width 0.1s linear;
+}
+.update-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 9px;
+  margin-top: 28px;
+}
+.update-actions button {
+  padding: 8px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.update-actions .update-primary {
+  background: #287dc1;
+  color: white;
+}
+.update-actions .update-primary:hover {
+  background: #206ead;
+}
+.update-actions .update-primary:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+.update-dialog .update-error {
+  color: #ac4343;
+  margin-top: 14px;
+}

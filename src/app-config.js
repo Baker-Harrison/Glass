@@ -3,4 +3,6 @@ export const profile = { displayName: "Glass", initials: "G" };
 
 // Future updater integration owns this flag. Never infer availability from
 // authentication, startup, or the installed version alone.
-export const features = { updateAvailable: false };
+export const features = {
+  updateAvailable: import.meta.env.VITE_GLASS_UPDATE_PREVIEW === "1",
+};

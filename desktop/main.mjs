@@ -276,6 +276,23 @@ async function start() {
   mainContents.on("will-navigate", (event) => event.preventDefault());
   agent = new AgentWorkspace(path.join(app.getPath("userData"), "agent"), emit);
   await agent.initialize();
+  handle("app:restart", async () => {
+    await persist();
+    await agent.dispose();
+    embedded.dispose();
+    terminals.dispose();
+    loginController?.abort();
+    app.relaunch(
+      process.platform === "darwin" && app.isPackaged
+        ? {
+            execPath: "/usr/bin/open",
+            args: ["-n", path.resolve(process.execPath, "../../..")],
+          }
+        : undefined,
+    );
+    setTimeout(() => app.exit(0), 100);
+    return { restarting: true };
+  });
   handle("state", async () => ({
     project,
     projects,
@@ -606,6 +623,9 @@ async function start() {
   handle("terminal:resize", (args) => terminals.resize(args));
   handle("terminal:close", ({ id }) => terminals.close(id));
   await mainContents.loadFile(path.join(here, "../dist/index.html"));
+  win.show();
+  win.focus();
+  app.focus({ steal: true });
   app.on("window-all-closed", () => {
     embedded.dispose();
     terminals.dispose();

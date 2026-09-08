@@ -1,6 +1,7 @@
 const { contextBridge, ipcRenderer } = require("electron");
 const channels = new Set([
   "state",
+  "app:restart",
   "editor:save-state",
   "plan:get",
   "plan:save",
