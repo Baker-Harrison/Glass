@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.DS_Store
+.env*
+.glass/
+release/
+
+# Local verification notes, account data, and generated output
+PARITY.md
+REQUIREMENTS.md
+*.log
+auth.json
+workspace.json
+browser-state.json

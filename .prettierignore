@@ -1,0 +1,8 @@
+node_modules
+vendor
+release
+dist
+PARITY.md
+REQUIREMENTS.md
+CLAUDE.md
+GEMINI.md

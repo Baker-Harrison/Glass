@@ -1,0 +1,25 @@
+name: CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    name: Build and test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: brew list ripgrep || brew install ripgrep
+      - run: npm ci
+      - run: npm run check
+      - run: npm test
+      - run: npm run build

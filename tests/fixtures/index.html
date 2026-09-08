@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Browser verification</title>
+    <style>
+      body {
+        font: 16px system-ui;
+        margin: 60px;
+        background: #faf9f6;
+        color: #343a40;
+      }
+      main {
+        max-width: 400px;
+      }
+      button,
+      input {
+        font: inherit;
+        padding: 9px 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+      }
+      button {
+        background: #294f77;
+        color: white;
+        cursor: pointer;
+      }
+      h1 {
+        font-size: 28px;
+      }
+      #result {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 id="headline" style="color: #234567">Browser verification</h1>
+      <p>Select this heading with the design tool.</p>
+      <label>Name <input id="name" placeholder="Your name" /></label>
+      <p>
+        <button id="greet">Say hello</button> <button id="reset">Reset</button>
+      </p>
+      <div id="result" role="status">Waiting for a name</div>
+    </main>
+    <script>
+      const result = document.querySelector("#result");
+      const nameInput = document.querySelector("#name");
+      document.querySelector("#greet").onclick = () =>
+        (result.textContent = "Hello, " + nameInput.value + "!");
+      document.querySelector("#reset").onclick = () => {
+        result.textContent = "";
+      };
+    </script>
+  </body>
+</html>
