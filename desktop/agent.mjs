@@ -8,6 +8,7 @@ import {
   DefaultResourceLoader,
   defineTool,
 } from "@earendil-works/pi-coding-agent";
+import { contextUsage } from "./context-usage.mjs";
 import { Plans } from "./plans.mjs";
 import { Questions } from "./questions.mjs";
 import { MessageTimings } from "./message-timings.mjs";
@@ -240,11 +241,18 @@ export class AgentWorkspace {
           decorated.message.glassTiming,
         );
       this.emit({ type: "agent_event", sessionId: id, event: decorated });
-      if (event.type === "message_end" || event.type === "agent_end")
+      if (
+        [
+          "message_update",
+          "message_end",
+          "agent_end",
+          "auto_compaction_end",
+        ].includes(event.type)
+      )
         this.emit({
           type: "context_usage",
           sessionId: id,
-          usage: session.getContextUsage(),
+          usage: contextUsage(session),
         });
     });
     this.setMode(id, mode);
@@ -296,6 +304,11 @@ export class AgentWorkspace {
             "update_todos",
           ],
     );
+    this.emit({
+      type: "context_usage",
+      sessionId: id,
+      usage: contextUsage(entry.session),
+    });
   }
   validatePrompt(id, text, images = []) {
     if (typeof text !== "string" || !text.trim())

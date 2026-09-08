@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { spawn } from "node:child_process";
 import { readFile, writeFile, rename } from "node:fs/promises";
+import { contextUsage } from "./context-usage.mjs";
 import { AgentWorkspace } from "./agent.mjs";
 import { WorkspaceTerminal } from "./terminal.mjs";
 import { WorkspaceBrowser } from "./browser.mjs";
@@ -280,7 +281,9 @@ async function start() {
     conversations: conversations.map((item) => ({
       ...item,
       busy: agent.sessions.get(item.id)?.session.isStreaming || false,
-      contextUsage: agent.sessions.get(item.id)?.session.getContextUsage(),
+      contextUsage: agent.sessions.has(item.id)
+        ? contextUsage(agent.get(item.id).session)
+        : undefined,
       waiting: agent.questions.pending(item.id).length > 0,
     })),
     editor: editorState,
@@ -388,7 +391,7 @@ async function start() {
         emit({
           type: "context_usage",
           sessionId: args.id,
-          usage: live.session.getContextUsage(),
+          usage: contextUsage(live.session),
         });
         return {
           ...saved,
@@ -419,7 +422,7 @@ async function start() {
     emit({
       type: "context_usage",
       sessionId: result.id,
-      usage: agent.get(result.id).session.getContextUsage(),
+      usage: contextUsage(agent.get(result.id).session),
     });
     if (!saved) {
       conversations.unshift({
@@ -455,6 +458,11 @@ async function start() {
     );
     await persist();
     emit({ type: "session_settings", sessionId: id, ...result });
+    emit({
+      type: "context_usage",
+      sessionId: id,
+      usage: contextUsage(agent.get(id).session),
+    });
     return result;
   });
   handle("agent:fork", async ({ id, timestamp, before = false }) => {
