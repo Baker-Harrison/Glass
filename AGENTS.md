@@ -28,5 +28,6 @@ Glass is an Electron/React macOS agent workspace using the Pi SDK and its OpenAI
 - Use feat/…, fix/…, or docs/… branches and a focused PR. Explain the problem, final behavior, checks, and limitations.
 - Do not claim complete visual parity from a build or a unit test alone.
 - Do not overwrite a running Glass.app bundle during packaging. Quit it first, or use a separate output path.
+- When making UI changes, make sure to include a before and after image below the text of the PR.
 
 CLAUDE.md and GEMINI.md are symlinks to this file. Edit only AGENTS.md for shared agent guidance.
