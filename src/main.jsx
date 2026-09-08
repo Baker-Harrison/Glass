@@ -1,3 +1,4 @@
+import WorkspaceSelector from "./workspace-selector.jsx";
 import glassLogo from "../assets/glass.png";
 import { profile, features } from "./app-config.js";
 import React, { useEffect, useRef, useState, lazy, Suspense } from "react";
@@ -114,6 +115,7 @@ function writeSaved(key, value) {
 function App() {
   const uiCommands = useRef({});
   const [textDialog, setTextDialog] = useState(null);
+  const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [accountMenu, setAccountMenu] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [projectMenu, setProjectMenu] = useState(null);
@@ -552,6 +554,7 @@ function App() {
   useEffect(() => {
     if (
       panel !== "browser" ||
+      workspaceMenuOpen ||
       accountMenu ||
       shortcutsOpen ||
       searchOpen ||
@@ -592,6 +595,7 @@ function App() {
       window.removeEventListener("resize", update);
     };
   }, [
+    workspaceMenuOpen,
     accountMenu,
     shortcutsOpen,
     panel,
@@ -834,7 +838,9 @@ function App() {
   }
   async function openFolder() {
     await run(async () => {
-      setProject(await api("project:open"));
+      const selected = await api("project:open");
+      if (!selected) return;
+      setProject(selected);
       setEntries({});
       setFile(null);
       newChat();
@@ -1089,6 +1095,7 @@ function App() {
   };
   const activeBrowser = browserTabs.find((tab) => tab.id === browserActive);
   const browserCovered = !!(
+    workspaceMenuOpen ||
     accountMenu ||
     shortcutsOpen ||
     settings ||
@@ -1792,16 +1799,61 @@ function App() {
             </div>
             <div className="composer-region">
               <div className="composer-project">
-                <button onClick={openFolder}>
-                  {project.split("/").pop() || "Open project"}{" "}
-                  <ChevronDown size={11} />
-                </button>
-                {git.branch && (
-                  <span>
-                    <GitBranch size={11} />
-                    {git.branch}
-                  </span>
-                )}
+                <WorkspaceSelector
+                  project={project}
+                  projects={projects}
+                  branch={git.branch}
+                  onOverlay={setWorkspaceMenuOpen}
+                  onFolder={async () => {
+                    const selected = await api("project:open");
+                    if (!selected) return;
+                    setProject(selected);
+                    setEntries({});
+                    setFile(null);
+                    newChat();
+                    await refresh();
+                  }}
+                  onProject={async (cwd) => {
+                    if (cwd === project) return;
+                    const selected = await api("project:select", { cwd });
+                    setProject(selected.project);
+                    setGit(selected.git);
+                    setEntries({});
+                    setFile(null);
+                    newChat();
+                    await refresh();
+                  }}
+                  onBranches={() => api("project:branches", { cwd: project })}
+                  onBranch={async (branch) => {
+                    if (
+                      (file && content !== original) ||
+                      [...fileBuffers.current].some(
+                        ([key, buffer]) =>
+                          key.startsWith(project + "/") &&
+                          buffer.content !== buffer.original,
+                      )
+                    )
+                      throw new Error(
+                        "Save or close unsaved files before switching branches.",
+                      );
+                    const result = await api("project:switch-branch", {
+                      cwd: project,
+                      branch,
+                    });
+                    setGit(result);
+                    setEntries({});
+                    setFileRevision((value) => value + 1);
+                    for (const [key, value] of fileBuffers.current)
+                      if (
+                        key.startsWith(project + "/") &&
+                        value.content === value.original
+                      )
+                        fileBuffers.current.delete(key);
+                    if (panel === "files") await loadFiles();
+                    if (panel === "changes")
+                      setChangeList(await api("project:changes"));
+                  }}
+                />
               </div>
               {error && (
                 <div className="error" role="alert">

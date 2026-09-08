@@ -14,7 +14,13 @@ import { readFile, writeFile, rename } from "node:fs/promises";
 import { AgentWorkspace } from "./agent.mjs";
 import { WorkspaceTerminal } from "./terminal.mjs";
 import { WorkspaceBrowser } from "./browser.mjs";
-import { gitInfo, changes, search } from "./project.mjs";
+import {
+  gitInfo,
+  changes,
+  search,
+  branches,
+  switchBranch,
+} from "./project.mjs";
 import {
   listFiles,
   readProjectFile,
@@ -289,10 +295,34 @@ async function start() {
     editorState = state;
     await persist();
   });
+  handle("project:branches", ({ cwd }) => {
+    if (cwd !== project)
+      throw new Error("The active project changed. Reopen the branch menu.");
+    return branches(project);
+  });
+  handle("project:switch-branch", async ({ cwd, branch }) => {
+    if (cwd !== project)
+      throw new Error("The active project changed. Reopen the branch menu.");
+    if (
+      [...agent.sessions.values()].some(
+        (item) => item.cwd === cwd && item.session.isStreaming,
+      )
+    )
+      throw new Error("Stop the running agent before switching branches.");
+    if (
+      editorState.buffers.some(
+        ([key, buffer]) =>
+          key.startsWith(cwd + path.sep) && buffer.content !== buffer.original,
+      )
+    )
+      throw new Error("Save or close unsaved files before switching branches.");
+    return switchBranch(project, branch);
+  });
   handle("project:open", async () => {
     const result = await dialog.showOpenDialog(win, {
       properties: ["openDirectory"],
     });
+    if (result.canceled) return null;
     if (!result.canceled) {
       project = result.filePaths[0];
       if (!projects.includes(project)) projects.push(project);
