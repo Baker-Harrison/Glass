@@ -111,6 +111,7 @@ async function start() {
     minHeight: 620,
     title: "Glass",
     titleBarStyle: "hiddenInset",
+    trafficLightPosition: { x: 10, y: 10 },
     backgroundColor: "#f7f6f5",
   });
   const mainView = new WebContentsView({
